@@ -8,6 +8,7 @@ import {
   Platform,
   ActivityIndicator,
   Alert,
+  Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
@@ -19,6 +20,8 @@ import {
 import { auth } from '@/lib/firebase';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
+import { makeRedirectUri } from 'expo-auth-session';
+import images from '@/constants/images';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -30,9 +33,12 @@ export default function LoginScreen() {
   const router = useRouter();
 
   const [request, response, promptAsync] = Google.useAuthRequest({
+    clientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
     iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
     androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+    redirectUri: makeRedirectUri({
+      scheme: 'sharksheets',
+    }),
   });
 
   useEffect(() => {
@@ -88,16 +94,22 @@ export default function LoginScreen() {
       className="flex-1 bg-gradient-to-b from-primary-600 to-primary-800"
     >
       <View className="flex-1 justify-center px-6">
-        <View className="bg-white rounded-3xl p-8 shadow-lg">
+        <View className="bg-black rounded-3xl p-8 shadow-lg">
           <Text className="text-4xl font-bold text-primary-700 text-center mb-2">
             SharkSheets
           </Text>
-          <Text className="text-gray-600 text-center mb-8">
+          <Text className="text-gray-100 text-center text-lg mb-8">
             Your Personal Planner
           </Text>
 
+          <Image
+            source={images.mascot}
+            className="w-full h-2/6 mb-2"
+            resizeMode="cover"
+          />
+
           <View className="mb-4">
-            <Text className="text-gray-700 mb-2 font-medium">Email</Text>
+            <Text className="text-gray-100 mb-2 font-medium">Email</Text>
             <TextInput
               className="bg-gray-100 rounded-xl px-4 py-3 text-gray-900"
               placeholder="Enter your email"
@@ -110,7 +122,7 @@ export default function LoginScreen() {
           </View>
 
           <View className="mb-6">
-            <Text className="text-gray-700 mb-2 font-medium">Password</Text>
+            <Text className="text-gray-100 mb-2 font-medium">Password</Text>
             <TextInput
               className="bg-gray-100 rounded-xl px-4 py-3 text-gray-900"
               placeholder="Enter your password"
@@ -136,20 +148,21 @@ export default function LoginScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="border-2 border-primary-600 rounded-xl py-4 mb-4"
+            className="border-2 border-primary-600 bg-black rounded-xl py-4 mb-4 flex align-middle justify-center flex-row"
             onPress={handleGoogleSignIn}
             disabled={loading}
           >
-            <Text className="text-primary-600 text-center font-semibold text-lg">
+            <Text className="text-primary-200 text-center font-semibold text-lg">
               Sign in with Google
             </Text>
+            <Image source={images.googleicon} className="w-6 h-6 mx-2 " />
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => setIsSignUp(!isSignUp)}
             disabled={loading}
           >
-            <Text className="text-gray-600 text-center">
+            <Text className="text-gray-100 text-center  italic">
               {isSignUp ? 'Already have an account? ' : "Don't have an account? "}
               <Text className="text-primary-600 font-semibold">
                 {isSignUp ? 'Sign In' : 'Sign Up'}
